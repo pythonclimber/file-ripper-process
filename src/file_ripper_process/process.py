@@ -6,8 +6,8 @@ from typing import List
 
 from file_ripper import FileDefinition, rip_file
 
-from src import file_ripper_process as pc
-from src.file_ripper_process.logger import create_logger
+from file_ripper_process import constants as pc
+from file_ripper_process.logger import create_logger
 
 logger = create_logger()
 

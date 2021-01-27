@@ -2,8 +2,8 @@ import os
 import unittest
 
 import file_ripper.fileconstants as fc
-from file_ripper_process import process_constants  as pc
-from file_ripper_process import create_file_definitions
+from file_ripper_process import constants as pc
+from file_ripper_process.process import create_file_definitions
 
 
 class CreateFileDefinitionsTests(unittest.TestCase):
