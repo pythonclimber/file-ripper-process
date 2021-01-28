@@ -1,9 +1,7 @@
-import sys
-import unittest
 from time import sleep
-import click
 
-from .process import execute_process
+import click
+from .process import FileRipperProcess
 
 
 @click.command()
@@ -14,7 +12,7 @@ from .process import execute_process
 def file_ripper_process(time_interval, file_definitions_path):
     try:
         while True:
-            execute_process(file_definitions_path)
+            FileRipperProcess(file_definitions_path).execute()
             sleep(time_interval * 60)
     except KeyboardInterrupt:
         print('Stopping file_ripper_process....')

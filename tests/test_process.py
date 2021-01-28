@@ -1,52 +1,40 @@
+import json
 import os
+import shutil
 import unittest
 
 import file_ripper.fileconstants as fc
 from file_ripper_process import constants as pc
-from file_ripper_process.process import create_file_definitions
+from file_ripper_process.process import FileRipperProcess
+
+from tests.utils import create_definitions_file
 
 
 class CreateFileDefinitionsTests(unittest.TestCase):
     def setUp(self) -> None:
-        self.json_data = {
-            pc.FILE_DEFINITIONS: [
-                {
-                    fc.FILE_MASK: 'Valid-*.csv',
-                    fc.FILE_TYPE: fc.DELIMITED,
-                    fc.DELIMITER: ',',
-                    fc.INPUT_DIRECTORY: os.path.join(os.getcwd(), 'files/delimited'),
-                    fc.COMPLETED_DIRECTORY: os.path.join(os.getcwd(), 'files/delimited/completed'),
-                    fc.FIELD_DEFINITIONS: [
-                        {
-                            fc.FIELD_NAME: 'name',
-                            fc.POSITION_IN_ROW: 0
-                        }
-                    ]
-                },
-                {
-                    fc.FILE_MASK: 'Valid-*.txt',
-                    fc.FILE_TYPE: fc.FIXED,
-                    fc.INPUT_DIRECTORY: os.path.join(os.getcwd(), 'files/fixed'),
-                    fc.COMPLETED_DIRECTORY: os.path.join(os.getcwd(), 'files/fixed/completed'),
-                    fc.FIELD_DEFINITIONS: [
-                        {
-                            fc.FIELD_NAME: 'name',
-                            fc.START_POSITION: 0,
-                            fc.FIELD_LENGTH: 12
-                        }
-                    ]
-                }
-            ]
-        }
+        self.json_data = create_definitions_file()
+        self._file_name = 'files/definitions.json'
+        if not os.path.exists('files'):
+            os.mkdir('files')
 
     def test_valid_definitions_file(self):
-        file_definitions = create_file_definitions(self.json_data)
-        self.assertEqual(2, len(file_definitions))
+        file_name = self.write_file(json.dumps(self.json_data), self._file_name)
+        process = FileRipperProcess(file_name)
+        self.assertEqual(2, len(process._file_definitions))
         
     def test_invalid_definitions_file(self):
         self.json_data[pc.FILE_DEFINITIONS][0][fc.DELIMITER] = None
+        file_name = self.write_file(json.dumps(self.json_data), self._file_name)
         with self.assertRaises(ValueError):
-            file_definitions = create_file_definitions(self.json_data)
+            FileRipperProcess(file_name)
+
+    def write_file(self, file_text, file_name):
+        with open(self._file_name, 'wt') as file:
+            file.write(file_text)
+            return os.path.abspath(self._file_name)
+
+    def tearDown(self) -> None:
+        shutil.rmtree('files')
     
 # class FileRipperProcessTests(unittest.TestCase):
 #     def setUp(self):
