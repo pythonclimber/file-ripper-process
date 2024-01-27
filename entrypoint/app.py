@@ -31,7 +31,15 @@ def _create_file(file_data: bytes):
 @app.authorizer()
 def authorizer(auth_request: AuthRequest):
     print(auth_request.token)
-    return AuthResponse(['/rip-file'], principal_id='user')
+    return AuthResponse(routes=['*'], principal_id='user')
+
+
+@app.route('/upload-data', methods=['POST'], content_types=['application/json'], authorizer=authorizer)
+def upload_data():
+    print(type(app.current_request.json_body))
+    return {
+        "message": "Success"
+    }
 
 
 @app.route(
