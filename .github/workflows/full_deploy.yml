@@ -2,6 +2,9 @@ name: Deploy File Ripper to AWS
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - 'main'
 
 
 jobs:
@@ -31,4 +34,4 @@ jobs:
           pip install -r requirements-dev.txt
           cd entrypoint
           pip install -r requirements.txt
-          chalice deploy
+          chalice deploy --stage dev
