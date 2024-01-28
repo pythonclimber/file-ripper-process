@@ -37,7 +37,7 @@ def build_file_name():
     current_timestamp = int(round(datetime.now().timestamp() * 1000))
     file_extension = app.current_request.json_body['fileExtension']
     file_definition_id = app.current_request.json_body['fileDefinitionId']
-    return f'{file_definition_id}-{current_timestamp}.{file_extension}'
+    return f'{file_definition_id}|{current_timestamp}.{file_extension}'
 
 
 @app.authorizer()

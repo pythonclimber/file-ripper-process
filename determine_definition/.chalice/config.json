@@ -3,7 +3,10 @@
   "app_name": "determine_definition",
   "stages": {
     "dev": {
-      "api_gateway_stage": "api"
+      "api_gateway_stage": "api",
+      "environment_variables": {
+        "s3_bucket_name": "entrypoint-file-storage-dev"
+      }
     }
   }
 }

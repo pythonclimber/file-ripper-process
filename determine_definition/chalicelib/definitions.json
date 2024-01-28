@@ -1,0 +1,26 @@
+[
+  {
+    "fieldDefinitions": [
+      {
+        "fieldName": "name",
+        "startPosition": 0,
+        "fieldLength": 10
+      },
+      {
+        "fieldName": "age",
+        "startPosition": 10,
+        "fieldLength": 3
+      },
+      {
+        "fieldName": "dateOfBirth",
+        "startPosition": 13,
+        "fieldLength": 10
+      }
+    ],
+    "fileType": "FIXED",
+    "recordXmlElement": "",
+    "delimiter": "",
+    "hasHeader": false,
+    "definitionId": "people-fixed"
+  }
+]

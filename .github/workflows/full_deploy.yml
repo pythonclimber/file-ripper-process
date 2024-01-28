@@ -43,4 +43,7 @@ jobs:
 
       - name: Deploy determine_definition
         run: |
-          pwd
+          pip install -r requirements-dev.txt
+          cd determine_definition
+          pip install -r requirements.txt
+          chalice deploy --stage dev

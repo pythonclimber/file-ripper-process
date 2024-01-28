@@ -1,0 +1,23 @@
+{
+  "resources": [
+    {
+      "name": "default-role",
+      "resource_type": "iam_role",
+      "role_arn": "arn:aws:iam::264067133037:role/determine_definition-dev",
+      "role_name": "determine_definition-dev"
+    },
+    {
+      "name": "handle_s3_event",
+      "resource_type": "lambda_function",
+      "lambda_arn": "arn:aws:lambda:us-east-1:264067133037:function:determine_definition-dev-handle_s3_event"
+    },
+    {
+      "name": "handle_s3_event-s3event",
+      "resource_type": "s3_event",
+      "bucket": "entrypoint-file-storage-dev",
+      "lambda_arn": "arn:aws:lambda:us-east-1:264067133037:function:determine_definition-dev-handle_s3_event"
+    }
+  ],
+  "schema_version": "2.0",
+  "backend": "api"
+}
