@@ -40,3 +40,7 @@ jobs:
           cd entrypoint
           pip install -r requirements.txt
           chalice deploy --stage dev
+
+      - name: Deploy determine_definition
+        run: |
+          pwd

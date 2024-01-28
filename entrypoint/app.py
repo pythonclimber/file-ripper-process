@@ -1,8 +1,12 @@
 import cgi
+import json
 import os
+import pprint
 from io import BytesIO
 from json import loads
+from datetime import datetime
 import tempfile
+import boto3
 
 from chalice import Chalice, AuthResponse
 from chalice.app import AuthRequest
@@ -10,6 +14,7 @@ from chalice.app import AuthRequest
 from file_ripper import rip_file, FileDefinition
 
 app = Chalice(app_name='entrypoint')
+s3_bucket = f'entrypoint-file-storage-{os.environ["environment"]}'
 
 
 def _get_parts():
@@ -28,6 +33,13 @@ def _create_file(file_data: bytes):
         file.write(file_contents)
 
 
+def build_file_name():
+    current_timestamp = int(round(datetime.now().timestamp() * 1000))
+    file_extension = app.current_request.json_body['fileExtension']
+    file_definition_id = app.current_request.json_body['fileDefinitionId']
+    return f'{file_definition_id}-{current_timestamp}.{file_extension}'
+
+
 @app.authorizer()
 def authorizer(auth_request: AuthRequest):
     print(auth_request.token)
@@ -36,7 +48,15 @@ def authorizer(auth_request: AuthRequest):
 
 @app.route('/upload-data', methods=['POST'], content_types=['application/json'], authorizer=authorizer)
 def upload_data():
-    print(type(app.current_request.json_body))
+    file_contents = app.current_request.json_body['fileContents']
+    file_name = build_file_name()
+
+    boto3.client('s3').put_object(
+        Body=file_contents,
+        Bucket=s3_bucket,
+        Key=file_name
+    )
+
     return {
         "message": "Success"
     }
@@ -51,6 +71,8 @@ def upload_data():
 )
 def rip_file_web():
     file_data, file_definition = _get_parts()
+
+    pprint.pprint(json.dumps(file_definition))
 
     with tempfile.TemporaryDirectory() as tempdir:
         os.chdir(tempdir)
