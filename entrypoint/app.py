@@ -1,5 +1,6 @@
 import cgi
 import json
+import logging
 import os
 import pprint
 from io import BytesIO
@@ -14,6 +15,7 @@ from chalice.app import AuthRequest
 from file_ripper import rip_file, FileDefinition
 
 app = Chalice(app_name='entrypoint')
+app.log.setLevel(logging.INFO)
 s3_bucket = f'entrypoint-file-storage-{os.environ["environment"]}'
 
 
@@ -29,7 +31,7 @@ def _get_parts():
 def _create_file(file_data: bytes):
     with open('current_file.txt', 'wt') as file:
         file_contents = file_data.decode('utf-8')
-        print(f'file_contents: {file_contents}')
+        app.log.debug(f'file_contents: {file_contents}')
         file.write(file_contents)
 
 
@@ -42,7 +44,7 @@ def build_file_name():
 
 @app.authorizer()
 def authorizer(auth_request: AuthRequest):
-    print(auth_request.token)
+    app.log.debug(auth_request.token)
     return AuthResponse(routes=['*'], principal_id='user')
 
 
@@ -79,14 +81,12 @@ def upload_data():
 def rip_file_web():
     file_data, file_definition = _get_parts()
 
-    pprint.pprint(json.dumps(file_definition))
-
     with tempfile.TemporaryDirectory() as tempdir:
         os.chdir(tempdir)
         _create_file(file_data)
 
         with open('current_file.txt', 'rt') as file:
             file_instance = rip_file(file, FileDefinition.create_from_dict(file_definition))
-            print(f'file_instance: {len(file_instance)}')
+            app.log.debug(f'file_instance: {len(file_instance)}')
 
     return file_instance.to_dict()
