@@ -48,19 +48,25 @@ def authorizer(auth_request: AuthRequest):
 
 @app.route('/upload-data', methods=['POST'], content_types=['application/json'], authorizer=authorizer)
 def upload_data():
-    file_contents = app.current_request.json_body['fileContents']
-    file_name = build_file_name()
+    try:
+        file_contents = app.current_request.json_body['fileContents']
+        file_name = build_file_name()
 
-    boto3.client('s3').put_object(
-        Body=file_contents,
-        Bucket=s3_bucket,
-        Key=file_name
-    )
+        boto3.client('s3').put_object(
+            Body=file_contents,
+            Bucket=s3_bucket,
+            Key=file_name
+        )
 
-    return {
-        "message": "Success",
-        "fileNameWithTimestamp": file_name
-    }
+        return {
+            "message": "Success",
+            "fileNameWithTimestamp": file_name
+        }
+    except Exception as err:
+        return {
+            "message": f"Error encountered: {err}",
+            "fileNameWithTimestamp": None,
+        }
 
 
 @app.route(
