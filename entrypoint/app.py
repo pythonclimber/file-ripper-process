@@ -58,7 +58,8 @@ def upload_data():
     )
 
     return {
-        "message": "Success"
+        "message": "Success",
+        "fileNameWithTimestamp": file_name
     }
 
 
